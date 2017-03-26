@@ -1,14 +1,27 @@
-'''
-    Raw sockets on Linux
-     
-    Silver Moon (m00n.silv3r@gmail.com)
-'''
- 
+
 # some imports
+from itertools import chain
 import socket, sys
+import struct
 from struct import *
+import binascii
  
 # checksum functions needed for calculation checksum
+
+def checkMac(mac):
+    if len(mac.split(":")) != 6:
+        print "The MAC is incorrect. It should be in Hexadecimal Format with each byte separated with colon...\n" 
+        sys.exit(0)
+    else:
+        macList = mac.split(":")
+        macLen = len(macList)
+        return tuple ([int(macList[index],16) for index in range(macLen)])
+dMac =  "18:cf:5e:27:75:c1"
+dMacTup = checkMac(dMac)
+sMac =  "b8:ee:65:02:de:bd"
+sMacTup = checkMac(sMac)
+type = 0x9002
+etherPack = struct.pack ("!6B6BH",*tuple(chain(dMacTup,sMacTup,[type])))
 def checksum(msg):
     s = 0
      
@@ -38,8 +51,8 @@ except socket.error , msg:
 # now start constructing the packet
 packet = '';
  
-source_ip = '172.16.82.27'
-dest_ip = '172.16.82.82' # or socket.gethostbyname('www.google.com')
+source_ip = '192.168.1.103'
+dest_ip = '192.168.1.102' # or socket.gethostbyname('www.google.com')
  
 # ip header fields
 ip_ihl = 5
@@ -101,7 +114,7 @@ tcp_check = checksum(psh)
 tcp_header = pack('!HHLLBBH' , tcp_source, tcp_dest, tcp_seq, tcp_ack_seq, tcp_offset_res, tcp_flags,  tcp_window) + pack('H' , tcp_check) + pack('!H' , tcp_urg_ptr)
  
 # final full packet - syn packets dont have any data
-packet = ip_header + tcp_header + user_data
+packet = etherPack + ip_header + tcp_header + user_data
  
 #Send the packet finally - the port specified has no effect
 s.sendto(packet, (dest_ip , 0 ))    # put this in a loop if you want to flood the target
