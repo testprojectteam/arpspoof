@@ -5,14 +5,14 @@ class db:
         self.cursor = self.db.cursor()
         # self.data = self.cursor.execute("SELECT VERSION()");
         # print "%s" % self.data
-        # self.cursor.execute("DROP TABLE IF EXISTS arp_map")
+        self.cursor.execute("DROP TABLE IF EXISTS arp_map")
         self.sql = """ CREATE TABLE  arp_map (
             IP CHAR(20) NOT NULL ,
             MAC CHAR(40) NOT NULL,
             PRIMARY KEY (IP,MAC)
         ) """# self.cursor.execute("DROP TABLE IF EXISTS arp_map")# self.cursor.execute("DROP TABLE IF EXISTS arp_map")
         try:
-            # self.cursor.execute(self.sql)
+            self.cursor.execute(self.sql)
             self.db.commit()
         except:
             print "Error creating table"
@@ -45,7 +45,7 @@ class db:
             self.cursor.execute(self.sql)
             self.db.commit()
         except:
-            print "Error while inserting data in db"
+            print "Entry already in db"
 
     def add_info_inv(self,ip,mac):
         self.sql="""INSERT INTO inv_host (IP,MAC) VALUES ('%s','%s')""" % (ip,mac)
@@ -53,7 +53,7 @@ class db:
             self.cursor.execute(self.sql)
             self.db.commit()
         except:
-            print "Error while inserting data in db"
+            print "Entry already in db"
 
     def present(self,ip,mac):
         self.sql="""SELECT MAC FROM arp_map

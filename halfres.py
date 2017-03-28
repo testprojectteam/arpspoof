@@ -38,7 +38,8 @@ def tcp_req(arpsrc_mac, src_ip):
     s_mac=sys_mac
     d_ip=src_ip
     s_ip=sys_ip
-    def sniftcp(): 
+
+    def sniftcp():
         #global p
         try:
             p=sniff(filter='tcp',timeout=3)
@@ -57,7 +58,7 @@ def tcp_req(arpsrc_mac, src_ip):
     snif_tcp_thread.start()
     send_packet_thread = threading.Thread(target=send_packets, name = "send_tcp_thread")
     send_packet_thread.start()
-    
+
     #except:
         #print "Spoofed except wala"
 
@@ -65,7 +66,7 @@ def tcp_req(arpsrc_mac, src_ip):
 
 def arp_req(arpsrc_mac, src_ip):
     try:
-        iFace = "wlp2s0"
+        iFace = "wlo1"
         rawSocket = socket.socket(socket.PF_PACKET, socket.SOCK_RAW,socket.htons(0x0800))
         rawSocket.bind((iFace, socket.htons(0x0800)))
         print "Raw Socket got created .... with the Ethernet Protocol Id : 0x0806 at interface %s"%str(iFace)
@@ -150,8 +151,8 @@ def check_arp_response(raw_data):
                 #return True
         #return False #2 means response
 
-            
-                    #c=c+1        
+
+                    #c=c+1
 
 def snif():
     #global raw_data
