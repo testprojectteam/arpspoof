@@ -88,8 +88,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Arp Spoof Detection Engine"))
-        self.ihbutton.setText(_translate("MainWindow", "View Invalid Hosts"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Cyber Eye"))
+        self.ihbutton.setText(_translate("MainWindow", "View Attackers log"))
         self.label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><br/></p></body></html>"))
         self.label_2.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">Status : </span><span style=\" font-weight:600; color:#ef2929;\">Not listening</span></p></body></html>"))
         self.helpButton.setText(_translate("MainWindow", "?"))

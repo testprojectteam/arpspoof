@@ -9,7 +9,8 @@ class db:
         self.sql = """ CREATE TABLE  arp_map (
             IP CHAR(20) NOT NULL ,
             MAC CHAR(40) NOT NULL,
-            PRIMARY KEY (IP,MAC)
+            IP_MAC CHAR(60) NOT NULL,
+            PRIMARY KEY (IP_MAC)
         ) """# self.cursor.execute("DROP TABLE IF EXISTS arp_map")# self.cursor.execute("DROP TABLE IF EXISTS arp_map")
         try:
             self.cursor.execute(self.sql)
@@ -17,14 +18,15 @@ class db:
         except:
             print "Error creating table"
 
-        # self.cursor.execute("DROP TABLE IF EXISTS inv_host")
+        self.cursor.execute("DROP TABLE IF EXISTS inv_host")
         self.sql = """ CREATE TABLE inv_host (
-            IP CHAR(20) NOT NULL  ,
+            IP CHAR(20) NOT NULL ,
             MAC CHAR(40) NOT NULL,
-            PRIMARY KEY(IP,MAC)
+            IP_MAC CHAR(60) NOT NULL,
+            PRIMARY KEY(IP_MAC)
         ) """
         try:
-            # self.cursor.execute(self.sql)
+            self.cursor.execute(self.sql)
             self.db.commit()
         except:
             print "Error creating table"
@@ -38,26 +40,53 @@ class db:
             print "cannot fetch entries from table"
         return self.cursor.fetchone()[0];
 
+    def get_ip(self,mac):
+        self.sql="""SELECT IP FROM arp_map
+                        WHERE MAC ='%s'""" % (mac)
+        try:
+            self.cursor.execute(self.sql);
+        except:
+            print "cannot fetch entries from table"
+        return self.cursor.fetchone()[0];
+    def update_ip(self,ip,mac):
+        self.sql="""UPDATE arp_map SET IP = '%s' WHERE MAC = '%s'""" % (ip,mac)
+        try:
+            self.cursor.execute(self.sql)
+            self.db.commit()
+        except:
+            print "error updating"
+    def add_info(self,ip,mac,ip_mac):
+        self.sql="""INSERT INTO arp_map (IP,MAC,IP_MAC) VALUES ('%s','%s','%s')""" % (ip,mac,ip_mac)
 
-    def add_info(self,ip,mac):
-        self.sql="""INSERT INTO arp_map (IP,MAC) VALUES ('%s','%s')""" % (ip,mac)
+        try:
+            self.cursor.execute(self.sql)
+            self.db.commit()
+        except:
+            print "error"
+
+    def add_info_inv(self,ip,mac,ip_mac):
+        self.sql="""INSERT INTO inv_host (IP,MAC,IP_MAC) VALUES ('%s','%s','%s')""" % (ip,mac,ip_mac)
         try:
             self.cursor.execute(self.sql)
             self.db.commit()
         except:
             print "Entry already in db"
 
-    def add_info_inv(self,ip,mac):
-        self.sql="""INSERT INTO inv_host (IP,MAC) VALUES ('%s','%s')""" % (ip,mac)
+    def present(self,ip_mac):
+        self.sql="""SELECT * FROM arp_map
+                        WHERE IP_MAC='%s'""" % (ip_mac)
         try:
             self.cursor.execute(self.sql)
-            self.db.commit()
         except:
-            print "Entry already in db"
+            print "error fetching data from db"
+        if self.cursor.rowcount > 0:
+            return True
+        else:
+            return False
 
-    def present(self,ip,mac):
-        self.sql="""SELECT MAC FROM arp_map
-                        WHERE IP ='%s' AND MAC = '%s'""" % (ip,mac)
+    def present_mac(self,mac):
+        self.sql="""SELECT * FROM arp_map
+                        WHERE MAC='%s'""" % (mac)
         try:
             self.cursor.execute(self.sql)
         except:
@@ -69,18 +98,20 @@ class db:
 
     def return_table(self):
         self.sql = "SELECT * FROM arp_map"
-        try:
-            self.cursor.execute(self.sql)
-        except:
-            print "error fetching data from db"
-            return ""
+        self.cursor.execute(self.sql)
+        # try:
+        #
+        # except:
+        #     print "error fetching data from db"
+        #     return ""
         return self.cursor.fetchall()
 
     def return_table_inv(self):
         self.sql = "SELECT * FROM inv_host"
-        try:
-            self.cursor.execute(self.sql)
-        except:
-            print "error fetching data from db"
-            return ""
+        self.cursor.execute(self.sql)
+        # try:
+        #
+        # except:
+        #     print "error fetching data from db"
+        #     return ""
         return self.cursor.fetchall()
